@@ -6,17 +6,18 @@ import folium
 import numpy as np
 import geopandas as gpd
 
-#import data
+"""#import data
 data = pd.read_csv('Data.csv', sep = ';')
 for i in range(2019,2022) :
     data[data['rentree_scolaire'] == i].hist(column = 'nombre_total_eleves', bins = data[data['rentree_scolaire'] == i]['nombre_total_eleves'].max(), grid=False, figsize=(12,8), color='#86bf91', zorder=2, rwidth=0.9)
     print(data[data['rentree_scolaire'] == i]['nombre_total_eleves'].sum())
-plt.show()
+plt.show()"""
 
-def map(year, data):
+def generate_map(year, data):
+
     data = data[data['rentree_scolaire'] == year]
 
-    map = folium.Map(location=[46, 2.6750], zoom_start = 7)   
+    map = folium.Map(location=[46, 2.6750], zoom_start = 7, tiles="cartodbpositron")   
     regions_data = data.drop(['rentree_scolaire', 'academie', 'departement', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri', 'code_postal'], axis=1)
     regions_data = regions_data.groupby(['region_academique']).agg({'region_academique' : 'first','nombre_total_eleves' : 'mean'})
     regions_data.loc[(regions_data.region_academique == 'AUVERGNE-ET-RHONE-ALPES'),'region_academique'] = 'Auvergne-Rh\u00f4ne-Alpes'
@@ -44,7 +45,7 @@ def map(year, data):
     scale = scale.tolist()
     scale[-1] = scale[-1]+1
 
-    region_layer = folium.FeatureGroup(name='Région_value', show=False)
+    region_layer = folium.FeatureGroup(name='Région value', show=False)
 
     folium.Choropleth(
     geo_data='regions.geojson',
@@ -135,7 +136,7 @@ def map(year, data):
     geo_departement_data = geo_departement_data.merge(departements_data, on="departement_number")
     geo_departement_data['nombre_total_eleves'] = geo_departement_data['nombre_total_eleves'].astype('int')
 
-    departement_layer = folium.FeatureGroup(name='Département_value', show=True)
+    departement_layer = folium.FeatureGroup(name='Département value', show=True)
 
     style_function = lambda x: {'fillColor': '#ffffff', 
                                 'color':'#000000', 
@@ -163,5 +164,10 @@ def map(year, data):
 
     map.save("map" + str(year) + ".html")
 
-for i in range(2019,2022) :
-    map(i, data)
+def map() :
+    data = pd.read_csv('Data.csv', sep = ';')
+    for i in range(2019,2022) :
+        generate_map(i, data)
+
+if __name__ == "__main__" :
+    map()
