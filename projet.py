@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.express as px
 import dash
 import plotly
 import matplotlib.pyplot as plt
@@ -6,12 +7,30 @@ import folium
 import numpy as np
 import geopandas as gpd
 
-"""#import data
-data = pd.read_csv('Data.csv', sep = ';')
-for i in range(2019,2022) :
-    data[data['rentree_scolaire'] == i].hist(column = 'nombre_total_eleves', bins = data[data['rentree_scolaire'] == i]['nombre_total_eleves'].max(), grid=False, figsize=(12,8), color='#86bf91', zorder=2, rwidth=0.9)
-    print(data[data['rentree_scolaire'] == i]['nombre_total_eleves'].sum())
-plt.show()"""
+def pie_chart(value):
+    data = pd.read_csv('Data.csv', sep = ';')
+    data = data[data['rentree_scolaire'] == value]
+    chart_dict = { "Classe" : ["Petite section","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
+    data["nombre_eleves_cp_hors_ulis"].sum(), data["nombre_eleves_ce1_hors_ulis"].sum(), 
+    data["nombre_eleves_ce2_hors_ulis"].sum(), data["nombre_eleves_cm1_hors_ulis"].sum(), 
+    data["nombre_eleves_cm2_hors_ulis"].sum()]}
+    chart_data = pd.DataFrame(data=chart_dict)
+    return px.pie(chart_data, hover_name ="Classe",values="nombre d'élève", hole=0.6)
+
+def histogram(value):
+    data = pd.read_csv('Data.csv', sep = ';')
+    return( 
+        px.histogram(
+            data[data['rentree_scolaire'] == value], 
+            x="nombre_total_eleves", 
+            nbins = int(data[data['rentree_scolaire'] == value]['nombre_total_eleves'].max()),  
+            labels={"nombre_total_eleves" : "nombre d'élève"},
+            ).update_layout(
+            yaxis_title="nombre d'école",
+            bargap=0.2,
+            width=1000
+    )
+)
 
 def generate_map(year, data):
 
