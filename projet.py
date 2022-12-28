@@ -38,7 +38,7 @@ def generate_map(year, data):
 
     map = folium.Map(location=[46, 2.6750], zoom_start = 7, tiles="cartodbpositron")   
     regions_data = data.drop(['rentree_scolaire', 'academie', 'departement', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri', 'code_postal'], axis=1)
-    regions_data = regions_data.groupby(['region_academique']).agg({'region_academique' : 'first','nombre_total_eleves' : 'mean'})
+    regions_data = regions_data.groupby(['region_academique']).agg({'region_academique' : 'first', 'nombre_total_classes' : 'mean', 'nombre_total_eleves' : 'mean'})
     regions_data.loc[(regions_data.region_academique == 'AUVERGNE-ET-RHONE-ALPES'),'region_academique'] = 'Auvergne-Rh\u00f4ne-Alpes'
     regions_data.loc[(regions_data.region_academique == 'BOURGOGNE-ET-FRANCHE-COMTE'),'region_academique'] = 'Bourgogne-Franche-Comt\u00e9'
     regions_data.loc[(regions_data.region_academique == 'BRETAGNE'),'region_academique'] = 'Bretagne'
@@ -86,7 +86,8 @@ def generate_map(year, data):
     geo_data.rename(columns={"nom" : "region_academique"}, inplace=True)
     regions_data.reset_index(drop = True, inplace=True)
     geo_data = geo_data.merge(regions_data, on="region_academique")
-    geo_data['nombre_total_eleves'] = geo_data['nombre_total_eleves'].astype('int')    
+    geo_data["nombre d'élève par classe moyen"] = (geo_data['nombre_total_eleves']/geo_data['nombre_total_classes']).astype('int')
+    geo_data['nombre_total_eleves'] = geo_data['nombre_total_eleves'].astype('int')
 
     style_function = lambda x: {'fillColor': '#ffffff', 
                                 'color':'#000000', 
@@ -96,23 +97,23 @@ def generate_map(year, data):
                                     'color':'#000000', 
                                     'fillOpacity': 0.50, 
                                     'weight': 0.1}
-    region = folium.features.GeoJson(
+    region_value = folium.features.GeoJson(
         geo_data,
         style_function=style_function, 
         control=False,
         highlight_function=highlight_function, 
         tooltip=folium.features.GeoJsonTooltip(
-            fields = ["region_academique", "nombre_total_eleves"],
-            aliases=['Région :', "nombre d'eleves moyen par école"],
+            fields = ["region_academique", "nombre_total_eleves", "nombre d'élève par classe moyen"],
+            aliases=['Région', "Nombre d'élèves moyen par école", "Nombre d'eleves moyen par classe"],
             style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;"),
         )
     )
-    region_layer.add_child(region)
+    region_layer.add_child(region_value)
     map.add_child(region_layer)
     map.keep_in_front(region_layer)
 
     departements_data = data.drop(['rentree_scolaire', 'academie', 'region_academique', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri'], axis=1)
-    departements_data = departements_data.groupby(['departement']).agg({'departement' : 'first', 'code_postal' : 'first', 'nombre_total_eleves' : 'mean'})
+    departements_data = departements_data.groupby(['departement']).agg({'departement' : 'first', 'nombre_total_classes' : 'mean', 'code_postal' : 'first', 'nombre_total_eleves' : 'mean'})
     departements_data.reset_index(drop = True, inplace=True)
     departements_data["departement_number"] = departements_data.code_postal.astype(str).str[:2]
 
@@ -153,6 +154,7 @@ def generate_map(year, data):
     geo_departement_data = gpd.read_file('departements.geojson')
     geo_departement_data.rename(columns={"code" : "departement_number"}, inplace=True)
     geo_departement_data = geo_departement_data.merge(departements_data, on="departement_number")
+    geo_departement_data["nombre_eleve_moyen_classe"] = (geo_departement_data['nombre_total_eleves']/geo_departement_data['nombre_total_classes']).astype('int')
     geo_departement_data['nombre_total_eleves'] = geo_departement_data['nombre_total_eleves'].astype('int')
 
     departement_layer = folium.FeatureGroup(name='Département value', show=True)
@@ -165,18 +167,18 @@ def generate_map(year, data):
                                     'color':'#000000', 
                                     'fillOpacity': 0.50, 
                                     'weight': 0.1}
-    region = folium.features.GeoJson(
+    departement_value = folium.features.GeoJson(
         geo_departement_data,
         style_function=style_function, 
         control=False,
         highlight_function=highlight_function, 
         tooltip=folium.features.GeoJsonTooltip(
-            fields = ["departement", "nombre_total_eleves"],
-            aliases=['departement :', "nombre d'eleves moyen par école"],
+            fields = ["departement", "nombre_total_eleves", "nombre_eleve_moyen_classe"],
+            aliases=['Département', "Nombre d'élèves moyen par école", "Nombre d'élèves moyen par classe"],
             style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;"),
         )
     )
-    departement_layer.add_child(region)
+    departement_layer.add_child(departement_value)
     map.add_child(departement_layer)
     map.keep_in_front(departement_layer)
     map.add_child(folium.LayerControl())
@@ -189,4 +191,5 @@ def map() :
         generate_map(i, data)
 
 if __name__ == "__main__" :
-    map()
+    test = pie_chart(2021)
+    test.show()
