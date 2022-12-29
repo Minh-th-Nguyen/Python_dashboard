@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc, Input, Output
 from projet import map, histogram, pie_chart, indicator
+from Layout import layout
 
 previous_value = 2021
 
@@ -10,53 +11,7 @@ data = pd.read_csv('Data.csv', sep = ';')
 
 app = Dash(__name__, external_stylesheets=stylesheets)
 app.title = "Dashboard"
-app.layout = html.Div([
-    html.H1("Dashboard Ecole primaire"),
-
-    html.Iframe(
-        id = "map", 
-        width = '100%', 
-        height = '1400'
-    ),
-
-    html.Div([    
-            html.Label('Année'),
-            dcc.Slider(    
-                2019, 2021, 1,
-                value=2021,
-                marks=None,
-                tooltip={"placement": "bottom", "always_visible": True},
-                id = "year"
-            )
-        ],
-        style={'width': "100%"}
-    ),
-
-    html.Div([ 
-        dcc.Graph(
-            id="histogram"
-        )
-    ], style={'width': "100%"}
-    ),
-
-    html.Div([ 
-            dcc.Graph(
-                id="pie chart"
-            )
-        ],
-        style={'width': "100%"}
-    ),
-
-    html.Div([ 
-            dcc.Graph(
-                id="indicator",
-            )
-        ],
-        style={'width': "100%"}
-    )
-
-])
-
+app.layout = layout()
 
 @app.callback(
     Output("map", "srcDoc"),
