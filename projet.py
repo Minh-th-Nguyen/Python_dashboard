@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import dash
 import plotly
 import matplotlib.pyplot as plt
@@ -28,7 +29,7 @@ def histogram(value):
             ).update_layout(
             yaxis_title="nombre d'école",
             bargap=0.2,
-            width=1000
+            #width=1000
     )
 )
 
@@ -189,6 +190,95 @@ def map() :
     data = pd.read_csv('Data.csv', sep = ';')
     for i in range(2019,2022) :
         generate_map(i, data)
+
+
+def indicator(year, previous_year) :
+    data = pd.read_csv("Data.csv", sep=";")
+
+    def Calculate_student_percentage(year) : 
+        df = data[data['rentree_scolaire'] == year]
+        df = df[df['secteur'] == "PUBLIC"]
+        return (df['nombre_total_eleves'].sum()*100)/data[data['rentree_scolaire'] == year]['nombre_total_eleves'].sum()
+
+    def Calculate_school_percentage(year) : 
+        df = data[data['rentree_scolaire'] == year]
+        df = df[df['secteur'] == "PUBLIC"]
+        return (len(df.axes[0])*100)/len(data[data['rentree_scolaire'] == year].axes[0])
+
+    fig = go.Figure(go.Indicator(
+        mode = "number+delta",
+        value = data[data['rentree_scolaire'] == year]['nombre_total_eleves'].sum(),
+        title = {"text": "<span style='font-size:1.5em'>Nombre d'élèves<br><span style='font-size:0.8em;color:gray'>Subtitle</span><br><span style='font-size:0.7em;color:gray'>Subsubtitle</span>"},
+        delta = {'reference': data[data['rentree_scolaire'] == previous_year]['nombre_total_eleves'].sum(), 'relative': True},
+        domain = {'x': [0, 0.25], 'y': [0.3, 0.7]}
+    ))
+        
+
+    fig.add_trace(
+        go.Indicator(
+        mode = "number+delta",
+        number = {'suffix': "%"},
+        value = Calculate_student_percentage(year),
+        title = {"text": "<span style='font-size:1.5em'>Elèves dans le public<br><span style='font-size:0.8em;color:gray'>Subtitle</span><br><span style='font-size:0.7em;color:gray'>Subsubtitle</span>"},
+        delta = {'reference': Calculate_student_percentage(previous_year), 'relative': False},
+        domain = {'x': [0.25, 0.5], 'y': [0.3, 0.7]}
+        )
+    )
+
+
+    fig.add_trace(
+        go.Indicator(
+        mode = "number+delta",
+        number = {'suffix': "%"},
+        value = Calculate_school_percentage(year),
+        title = {"text": "<span style='font-size:1.5em'>Ecole publique<br><span style='font-size:0.8em;color:gray'>Subtitle</span><br><span style='font-size:0.7em;color:gray'>Subsubtitle</span>"},
+        delta = {'reference': Calculate_school_percentage(previous_year), 'relative': False},
+        domain = {'x': [0.5, 0.75], 'y': [0.3, 0.7]}
+        )
+    )
+
+
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = len(data[data['rentree_scolaire'] == year].axes[0]),
+        title = {"text": "<span style='font-size:1.5em'>Nombre d'écoles<br><span style='font-size:0.8em;color:gray'>Subtitle</span><br><span style='font-size:0.7em;color:gray'>Subsubtitle</span>"},
+        delta = {'reference': len(data[data['rentree_scolaire'] == previous_year].axes[0]), 'relative': True},
+        domain = {'x': [0.75, 1], 'y': [0.3, 0.7]}
+        )
+    )
+
+    fig.add_trace(go.Indicator(
+        mode = "gauge",
+        value = Calculate_student_percentage(year),
+        align = "left",
+        domain = {'x': [0.32, 0.43], 'y': [0.25, 0.3]},
+        gauge = {
+            'shape': "bullet",
+            'axis': {'range': [0, 100]},
+            'bar': {
+                'color': "red",
+                'thickness': .9,
+            },
+        },
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "gauge",
+        value = Calculate_school_percentage(year),
+        align = "left",
+        domain = {'x': [0.57, 0.68], 'y': [0.25, 0.3]},
+        gauge = {
+            'shape': "bullet",
+            'axis': {'range': [0, 100]},
+            'bar': {
+                'color': "red",
+                'thickness': .9,
+            },
+        },
+    ))
+
+    return fig
+
 
 if __name__ == "__main__" :
     test = pie_chart(2021)
