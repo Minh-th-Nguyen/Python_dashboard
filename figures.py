@@ -8,11 +8,11 @@ import folium
 import numpy as np
 import geopandas as gpd
 
-data = pd.read_csv('resources\Data.csv', sep = ';')
+global_data = pd.read_csv('resources\Data.csv', sep = ';')
 
 def pie_chart(value):
-    global data
-    data = data[data['rentree_scolaire'] == value]
+    global global_data
+    data = global_data[global_data['rentree_scolaire'] == value]
     chart_dict = { "Classe" : ["Pré-élémentaire","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
     data["nombre_eleves_cp_hors_ulis"].sum(), data["nombre_eleves_ce1_hors_ulis"].sum(), 
     data["nombre_eleves_ce2_hors_ulis"].sum(), data["nombre_eleves_cm1_hors_ulis"].sum(), 
@@ -24,12 +24,12 @@ def pie_chart(value):
     })
 
 def histogram(value):
-    global data
+    global global_data
     return( 
         px.histogram(
-            data[data['rentree_scolaire'] == value], 
+            global_data[global_data['rentree_scolaire'] == value], 
             x="nombre_total_eleves", 
-            nbins = int(data[data['rentree_scolaire'] == value]['nombre_total_eleves'].max()),  
+            nbins = int(global_data[global_data['rentree_scolaire'] == value]['nombre_total_eleves'].max()),  
             labels={"nombre_total_eleves" : "nombre d'élève"},
             ).update_layout(
             yaxis_title="nombre d'école",
@@ -42,7 +42,7 @@ def histogram(value):
 
 def generate_map(year, data):
 
-    data = data[data['rentree_scolaire'] == year]
+    data = global_data[global_data['rentree_scolaire'] == year]
 
     map = folium.Map(location=[46, 2.6750], zoom_start = 7, tiles="cartodbpositron")   
     regions_data = data.drop(['rentree_scolaire', 'academie', 'departement', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri', 'code_postal'], axis=1)
@@ -196,13 +196,14 @@ def generate_map(year, data):
     map.save("resources\map" + str(year) + ".html")
 
 def map() :
-    global data
+    global global_data
     for i in range(2019,2022) :
-        generate_map(i, data)
+        generate_map(i, global_data)
 
 
 def indicator(year, previous_year) :
-    global data
+    global global_data
+    data = global_data
 
     def Calculate_student_percentage(year) : 
         df = data[data['rentree_scolaire'] == year]
