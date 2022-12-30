@@ -8,8 +8,10 @@ import folium
 import numpy as np
 import geopandas as gpd
 
+data = pd.read_csv('resources\Data.csv', sep = ';')
+
 def pie_chart(value):
-    data = pd.read_csv('Data.csv', sep = ';')
+    global data
     data = data[data['rentree_scolaire'] == value]
     chart_dict = { "Classe" : ["Pré-élémentaire","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
     data["nombre_eleves_cp_hors_ulis"].sum(), data["nombre_eleves_ce1_hors_ulis"].sum(), 
@@ -22,7 +24,7 @@ def pie_chart(value):
     })
 
 def histogram(value):
-    data = pd.read_csv('Data.csv', sep = ';')
+    global data
     return( 
         px.histogram(
             data[data['rentree_scolaire'] == value], 
@@ -72,8 +74,10 @@ def generate_map(year, data):
 
     region_layer = folium.FeatureGroup(name='Région value', show=False)
 
+    geo_data = gpd.read_file("resources/regions.geojson")
+
     folium.Choropleth(
-    geo_data='regions.geojson',
+    geo_data=geo_data,
     data=regions_data,
     columns=['region_academique', 'nombre_total_eleves'],
     key_on='properties.nom',
@@ -88,7 +92,6 @@ def generate_map(year, data):
     name="Région",
     ).add_to(map)
 
-    geo_data = gpd.read_file('regions.geojson')
     geo_data.rename(columns={"nom" : "region_academique"}, inplace=True)
     regions_data.reset_index(drop = True, inplace=True)
     geo_data = geo_data.merge(regions_data, on="region_academique")
@@ -141,8 +144,10 @@ def generate_map(year, data):
     scaledep = scaledep.tolist()
     scaledep[-1] = scaledep[-1]+1
 
+    geo_departement_data = gpd.read_file("resources/departements.geojson")
+
     departement = folium.Choropleth(
-    geo_data='departements.geojson',
+    geo_data=geo_departement_data,
     data=departements_data,
     columns=['departement_number', 'nombre_total_eleves'],
     key_on='properties.code',
@@ -157,7 +162,6 @@ def generate_map(year, data):
     )
     map.add_child(departement)
 
-    geo_departement_data = gpd.read_file('departements.geojson')
     geo_departement_data.rename(columns={"code" : "departement_number"}, inplace=True)
     geo_departement_data = geo_departement_data.merge(departements_data, on="departement_number")
     geo_departement_data["nombre_eleve_moyen_classe"] = (geo_departement_data['nombre_total_eleves']/geo_departement_data['nombre_total_classes']).astype('int')
@@ -189,16 +193,16 @@ def generate_map(year, data):
     map.keep_in_front(departement_layer)
     map.add_child(folium.LayerControl())
 
-    map.save("map" + str(year) + ".html")
+    map.save("resources\map" + str(year) + ".html")
 
 def map() :
-    data = pd.read_csv('Data.csv', sep = ';')
+    global data
     for i in range(2019,2022) :
         generate_map(i, data)
 
 
 def indicator(year, previous_year) :
-    data = pd.read_csv("Data.csv", sep=";")
+    global data
 
     def Calculate_student_percentage(year) : 
         df = data[data['rentree_scolaire'] == year]

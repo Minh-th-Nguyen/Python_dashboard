@@ -1,13 +1,12 @@
 import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc, Input, Output
-from projet import map, histogram, pie_chart, indicator
-from Layout import layout
+from figures import map, histogram, pie_chart, indicator
+from resources.Layout import layout
 
 previous_value = 2021
 
 stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-data = pd.read_csv('Data.csv', sep = ';')
 
 app = Dash(__name__, external_stylesheets=stylesheets)
 app.title = "Dashboard"
@@ -19,8 +18,8 @@ app.layout = layout()
     )
 def update_map(value):
     if value is None : 
-        return open("map2021.html", 'r').read()
-    return open("map" + str(value) + ".html", 'r').read()
+        return open("resources\map2021.html", 'r').read()
+    return open("resources\map" + str(value) + ".html", 'r').read()
 
 
 @app.callback(
