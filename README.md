@@ -76,6 +76,15 @@ graph Dashboard;
     D(Layout) -->|layout| A;
     E(data) --> |data| B ;
 ```
+
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
+
 ## Copyright
 
 Je déclare sur l’honneur que le code fourni a été produit par moi même dans sa totatilité.
