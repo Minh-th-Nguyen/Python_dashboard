@@ -66,15 +66,15 @@ le fichier layout donne la forme de la page html et la fourni a main.py pour ini
 Le fichier Data.py télécharge les données lors de la première éxecution du dashboard
 
 ```mermaid
-graph Dashboard
-    A[Main] -->|year| B(figures)
-    A--> C(dashboard)
-    B -->|map| A
-       B -->|pie chart| A
-          B -->|histogram| A
-             B -->|indicator| A
-    D(Layout) -->|layout| A
-    E(data) --> |data| B 
+graph Dashboard;
+    A[Main] -->|year| B(figures);
+    A--> C(dashboard);
+    B -->|map| A;
+       B -->|pie chart| A;
+          B -->|histogram| A;
+             B -->|indicator| A;
+    D(Layout) -->|layout| A;
+    E(data) --> |data| B ;
 ```
 ## Copyright
 
