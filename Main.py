@@ -12,6 +12,7 @@ stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 #dash page
 app = Dash(__name__, external_stylesheets=stylesheets)
 app.title = "Dashboard Ecole"
+#create webpage layout (layout is defined in a seperated file)
 app.layout = layout()
 
 #callback to update map

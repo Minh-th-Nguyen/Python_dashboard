@@ -58,9 +58,11 @@ def generate_map(year, data):
     #create empty map
     map = folium.Map(location=[46, 2.6750], zoom_start = 6, tiles="cartodbpositron")   
 
-    
+    #rework data to have number of student in each school
     regions_data = data.drop(['rentree_scolaire', 'academie', 'departement', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri', 'code_postal'], axis=1)
     regions_data = regions_data.groupby(['region_academique']).agg({'region_academique' : 'first', 'nombre_total_classes' : 'mean', 'nombre_total_eleves' : 'mean'})
+   
+    #rework data due to mismatch in name between geo.json and raw data
     regions_data.loc[(regions_data.region_academique == 'AUVERGNE-ET-RHONE-ALPES'),'region_academique'] = 'Auvergne-Rh\u00f4ne-Alpes'
     regions_data.loc[(regions_data.region_academique == 'BOURGOGNE-ET-FRANCHE-COMTE'),'region_academique'] = 'Bourgogne-Franche-Comt\u00e9'
     regions_data.loc[(regions_data.region_academique == 'BRETAGNE'),'region_academique'] = 'Bretagne'
@@ -80,16 +82,20 @@ def generate_map(year, data):
     regions_data.loc[(regions_data.region_academique == 'PAYS-DE-LA-LOIRE'),'region_academique'] = 'Pays de la Loire'
     regions_data.loc[(regions_data.region_academique == "PROVENCE-ALPES-COTE-D'AZUR"),'region_academique'] = "Provence-Alpes-C\u00f4te d'Azur"
 
+    #create scale base on the data
     scale = np.linspace(regions_data['nombre_total_eleves'].min(),
     regions_data['nombre_total_eleves'].max(),
     10, dtype=int)
     scale = scale.tolist()
     scale[-1] = scale[-1]+1
 
+    #define layer for region's data
     region_layer = folium.FeatureGroup(name='Région value', show=False)
 
+    #geojson of region
     geo_data = gpd.read_file("resources/regions.geojson")
 
+    #create choropleth and add it to the map
     folium.Choropleth(
     geo_data=geo_data,
     data=regions_data,
@@ -106,12 +112,14 @@ def generate_map(year, data):
     name="Région",
     ).add_to(map)
 
+    #create new dataframe containing data and coordinate
     geo_data.rename(columns={"nom" : "region_academique"}, inplace=True)
     regions_data.reset_index(drop = True, inplace=True)
     geo_data = geo_data.merge(regions_data, on="region_academique")
     geo_data["nombre d'élève par classe moyen"] = (geo_data['nombre_total_eleves']/geo_data['nombre_total_classes']).astype('int')
     geo_data['nombre_total_eleves'] = geo_data['nombre_total_eleves'].astype('int')
 
+    #define style for pop up windows
     style_function = lambda x: {'fillColor': '#ffffff', 
                                 'color':'#000000', 
                                 'fillOpacity': 0.1, 
@@ -120,6 +128,8 @@ def generate_map(year, data):
                                     'color':'#000000', 
                                     'fillOpacity': 0.50, 
                                     'weight': 0.1}
+
+    #add pop up to the map
     region_value = folium.features.GeoJson(
         geo_data,
         style_function=style_function, 
@@ -135,11 +145,13 @@ def generate_map(year, data):
     map.add_child(region_layer)
     map.keep_in_front(region_layer)
 
+    #rework data
     departements_data = data.drop(['rentree_scolaire', 'academie', 'region_academique', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri'], axis=1)
     departements_data = departements_data.groupby(['departement']).agg({'departement' : 'first', 'nombre_total_classes' : 'mean', 'code_postal' : 'first', 'nombre_total_eleves' : 'mean'})
     departements_data.reset_index(drop = True, inplace=True)
     departements_data["departement_number"] = departements_data.code_postal.astype(str).str[:2]
 
+    #rework data due to mismatch in name between geo.json and raw data
     departements_data.loc[(departements_data.departement == 'CORSE-DU-SUD'),'departement_number'] = '2A'
     departements_data.loc[(departements_data.departement == 'HAUTE-CORSE'),'departement_number'] = '2B'
     departements_data.loc[(departements_data.departement == 'AIN'),'departement_number'] = '01'
@@ -152,14 +164,17 @@ def generate_map(year, data):
     departements_data.loc[(departements_data.departement == 'ARDENNES'),'departement_number'] = '08'
     departements_data.loc[(departements_data.departement == 'ARIEGE'),'departement_number'] = '09'
 
+    #create scale
     scaledep = np.linspace(departements_data['nombre_total_eleves'].min(),
     regions_data['nombre_total_eleves'].max(),
     10, dtype=int)
     scaledep = scaledep.tolist()
     scaledep[-1] = scaledep[-1]+1
 
+    #read geojson
     geo_departement_data = gpd.read_file("resources/departements.geojson")
 
+    #create choropleth and add to map
     departement = folium.Choropleth(
     geo_data=geo_departement_data,
     data=departements_data,
@@ -176,21 +191,16 @@ def generate_map(year, data):
     )
     map.add_child(departement)
 
+    #create dataframe containing geojson and data
     geo_departement_data.rename(columns={"code" : "departement_number"}, inplace=True)
     geo_departement_data = geo_departement_data.merge(departements_data, on="departement_number")
     geo_departement_data["nombre_eleve_moyen_classe"] = (geo_departement_data['nombre_total_eleves']/geo_departement_data['nombre_total_classes']).astype('int')
     geo_departement_data['nombre_total_eleves'] = geo_departement_data['nombre_total_eleves'].astype('int')
 
+    #layer for departement data
     departement_layer = folium.FeatureGroup(name='Département value', show=True)
 
-    style_function = lambda x: {'fillColor': '#ffffff', 
-                                'color':'#000000', 
-                                'fillOpacity': 0.1, 
-                                'weight': 0.1}
-    highlight_function = lambda x: {'fillColor': '#000000', 
-                                    'color':'#000000', 
-                                    'fillOpacity': 0.50, 
-                                    'weight': 0.1}
+    #add pop up to the map
     departement_value = folium.features.GeoJson(
         geo_departement_data,
         style_function=style_function, 
@@ -207,18 +217,21 @@ def generate_map(year, data):
     map.keep_in_front(departement_layer)
     map.add_child(folium.LayerControl())
 
+    #save map in resources and name it depending on the year 
     map.save("resources\map" + str(year) + ".html")
 
+#create all maps
 def map() :
     global global_data
     for i in range(2019,2022) :
         generate_map(i, global_data)
 
-
+#create indicator for nb student
 def nb_student(year, previous_year) :
     global global_data
     data = global_data
 
+    #indicator
     fig = go.Figure(go.Indicator(
     mode = "number+delta",
     number = {"font":{"size":50}},
@@ -228,6 +241,7 @@ def nb_student(year, previous_year) :
     domain = {'x': [0, 1], 'y': [0.3, 0.7]}
     ))
 
+    #transparent background and define size
     fig.update_layout({
     "plot_bgcolor": "rgba(0, 0, 0, 0)",
     "paper_bgcolor": "rgba(0, 0, 0, 0)",
@@ -237,16 +251,18 @@ def nb_student(year, previous_year) :
 
     return fig
 
-
+#create indicator for percentage of student in public school
 def student_percentage(year, previous_year) :
     global global_data
     data = global_data
 
+    #calculate percentage of student in public school
     def Calculate_student_percentage(year) : 
         df = data[data['rentree_scolaire'] == year]
         df = df[df['secteur'] == "PUBLIC"]
         return (df['nombre_total_eleves'].sum()*100)/data[data['rentree_scolaire'] == year]['nombre_total_eleves'].sum()
 
+    #create indicator
     fig = go.Figure(
     go.Indicator(
     mode = "number+delta",
@@ -258,6 +274,7 @@ def student_percentage(year, previous_year) :
         )
     )
 
+    #create gauge indicator
     fig.add_trace(go.Indicator(
         mode = "gauge",
         value = Calculate_student_percentage(year),
@@ -273,6 +290,7 @@ def student_percentage(year, previous_year) :
         },
     ))
 
+    #transparent background and define size
     fig.update_layout({
     "plot_bgcolor": "rgba(0, 0, 0, 0)",
     "paper_bgcolor": "rgba(0, 0, 0, 0)",
@@ -282,16 +300,18 @@ def student_percentage(year, previous_year) :
 
     return fig
 
+#create indicator for percentage of public school
 def school_percentage(year, previous_year) :
     global global_data
     data = global_data
 
+    #calculate percentage of public school
     def Calculate_school_percentage(year) : 
         df = data[data['rentree_scolaire'] == year]
         df = df[df['secteur'] == "PUBLIC"]
         return (len(df.axes[0])*100)/len(data[data['rentree_scolaire'] == year].axes[0])        
 
-
+    #create indicator
     fig = go.Figure(
         go.Indicator(
         mode = "number+delta",
@@ -303,6 +323,7 @@ def school_percentage(year, previous_year) :
         )
     )
 
+    #create gauge
     fig.add_trace(go.Indicator(
         mode = "gauge",
         value = Calculate_school_percentage(year),
@@ -318,6 +339,7 @@ def school_percentage(year, previous_year) :
         },
     ))
 
+    #transparent background and define size
     fig.update_layout({
     "plot_bgcolor": "rgba(0, 0, 0, 0)",
     "paper_bgcolor": "rgba(0, 0, 0, 0)",
@@ -327,11 +349,12 @@ def school_percentage(year, previous_year) :
 
     return fig
 
-
+#create indicator for number of school
 def nb_school(year, previous_year) :
     global global_data
     data = global_data
 
+    #create indicator
     fig = go.Figure(go.Indicator(
         mode = "number+delta",
         number = {"font":{"size":50}},
@@ -342,6 +365,7 @@ def nb_school(year, previous_year) :
         )
     )
 
+    #transparent background and size
     fig.update_layout({
     "plot_bgcolor": "rgba(0, 0, 0, 0)",
     "paper_bgcolor": "rgba(0, 0, 0, 0)",
@@ -351,6 +375,3 @@ def nb_school(year, previous_year) :
 
     return fig
     
-if __name__ == "__main__" :
-    test = pie_chart(2021)
-    test.show()
