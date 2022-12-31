@@ -7,8 +7,12 @@ import matplotlib.pyplot as plt
 import folium
 import numpy as np
 import geopandas as gpd
+from resources.Data import download_data
 
 #file figures import and transform the data to create figures that will be used in the Main
+
+#download data from https://www.data.gouv.fr/fr/datasets/effectifs-deleves-par-niveau-et-nombre-de-classes-par-ecole-date-dobservation-au-debut-du-mois-doctobre-chaque-annee/
+download_data()
 
 #raw data
 global_data = pd.read_csv('resources\Data.csv', sep = ';')
