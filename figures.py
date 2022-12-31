@@ -8,10 +8,14 @@ import folium
 import numpy as np
 import geopandas as gpd
 
+#raw data
 global_data = pd.read_csv('resources\Data.csv', sep = ';')
 
+#create pie chart
 def pie_chart(value):
     global global_data
+
+    #transform data to have a dataframe of all classes and numbers of student in each classes
     data = global_data[global_data['rentree_scolaire'] == value]
     chart_dict = { "Classe" : ["Pré-élémentaire", "élémentaire","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
     data["nombre_eleves_elementaire_hors_ulis"].sum(),
@@ -19,12 +23,16 @@ def pie_chart(value):
     data["nombre_eleves_ce2_hors_ulis"].sum(), data["nombre_eleves_cm1_hors_ulis"].sum(), 
     data["nombre_eleves_cm2_hors_ulis"].sum()]}
     chart_data = pd.DataFrame(data=chart_dict)
-    return px.pie(chart_data, hover_name ="Classe",values="nombre d'élève", hole=0.6).update_layout({
-    "plot_bgcolor": "rgba(0, 0, 0, 0)",
-    "paper_bgcolor": "rgba(0, 0, 0, 0)",
-    "height" : 400,
+
+    #create the pie chart
+    return px.pie(chart_data, names="Classe", hover_name ="Classe",values="nombre d'élève", hole=0.6).update_layout({
+        "height" : 400,
+        "margin" : dict(t=20, b=10),
+        "plot_bgcolor": "rgba(0, 0, 0, 0)",
+        "paper_bgcolor": "rgba(0, 0, 0, 0)",
     })
 
+#create histogram
 def histogram(value):
     global global_data
     return( 
@@ -42,11 +50,15 @@ def histogram(value):
     })
 )
 
+#create a map for a specific year
 def generate_map(year, data):
 
     data = global_data[global_data['rentree_scolaire'] == year]
 
+    #create empty map
     map = folium.Map(location=[46, 2.6750], zoom_start = 6, tiles="cartodbpositron")   
+
+    
     regions_data = data.drop(['rentree_scolaire', 'academie', 'departement', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri', 'code_postal'], axis=1)
     regions_data = regions_data.groupby(['region_academique']).agg({'region_academique' : 'first', 'nombre_total_classes' : 'mean', 'nombre_total_eleves' : 'mean'})
     regions_data.loc[(regions_data.region_academique == 'AUVERGNE-ET-RHONE-ALPES'),'region_academique'] = 'Auvergne-Rh\u00f4ne-Alpes'

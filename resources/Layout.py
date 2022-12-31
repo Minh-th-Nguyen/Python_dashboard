@@ -84,9 +84,11 @@ def layout():
                 html.H2("Nombre d'écoles", id="pie_chart_title"),
 
                 html.Div([
-                    dcc.Graph(
-                        id="pie chart"
-                    )
+                    html.Div([
+                        dcc.Graph(
+                            id="pie chart"
+                        )
+                    ], id="pie_chart")
                 ], id="pie_chart2"
                 ),
 

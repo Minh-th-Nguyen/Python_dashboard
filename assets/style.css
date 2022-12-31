@@ -78,17 +78,17 @@ body {
     margin-left: -2.5%;
     height: 453px;
     background-color: white;
-    width: 85%;
+    width: 85.5%;
+    border-radius: 10px;
     box-shadow: 4px 4px 10px #1c1a19;
-    border-radius:10px;
 }
 
 #pie_chart2 {
     margin-left: -2.5%;
     background-color: white;
-    margin-top: 30px;
+    margin-top: 34px;
     height: 400px;
-    width: 85%;
+    width: 85.5%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
@@ -143,7 +143,7 @@ body {
 #map2{
     background-color: white;
     height: 960px;
-    width: 85%;
+    width: 85.5%;
     margin-left: 16.5%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
@@ -151,7 +151,7 @@ body {
 
 #histogram_title {
     margin-left: -2.5%;
-    width: 85%;
+    width: 85.5%;
     background-color: white;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
@@ -160,7 +160,7 @@ body {
 
 #pie_chart_title {
     margin-left: -2.5%;
-    width: 85%;
+    width: 85.5%;
     background-color: white;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius: 10px;
@@ -171,7 +171,7 @@ body {
 
 #map_title{
     background-color: white;
-    width: 85%;
+    width: 85.5%;
     margin-left: 16.5%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius: 10px;
