@@ -4,7 +4,7 @@ from dash import html, dcc
 def layout(): 
     return html.Div([
         html.Div([
-            html.H1("Dashboard Ecole primaire, élémentaire et pré-élémentaire"),
+            html.H1("Dashboard Ecole élémentaire et pré-élémentaire"),
         ], id="title"),
 
         html.Div([ 
@@ -65,7 +65,7 @@ def layout():
 
         html.Div([
             html.Div([
-                html.H2("Nombre d'écoles", id="map_title"),
+                html.H2("Comparaison du nombre d'élève par école", id="map_title"),
                 html.Div([
                     html.Iframe(id="map")
                 ], id="map2")
@@ -73,7 +73,7 @@ def layout():
 
             html.Div([
 
-                html.H2("Nombre d'écoles", id="histogram_title"),
+                html.H2("Répartition du nombre d'élève par école", id="histogram_title"),
 
                 html.Div([
                     dcc.Graph(
@@ -82,7 +82,7 @@ def layout():
                 ], id="histogram2"
                 ),
 
-                html.H2("Nombre d'écoles", id="pie_chart_title"),
+                html.H2("Répartition des élèves par classe", id="pie_chart_title"),
 
                 html.Div([
                     html.Div([

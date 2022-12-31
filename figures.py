@@ -26,8 +26,8 @@ def pie_chart(value):
 
     #transform data to have a dataframe of all classes and numbers of student in each classes
     data = global_data[global_data['rentree_scolaire'] == value]
-    chart_dict = { "Classe" : ["Pré-élémentaire", "élémentaire","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
-    data["nombre_eleves_elementaire_hors_ulis"].sum(),
+    chart_dict = { "Classe" : ["Pré-élémentaire", "CP", "CE1", "CE2", "CM1", "CM2"], 
+    "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
     data["nombre_eleves_cp_hors_ulis"].sum(), data["nombre_eleves_ce1_hors_ulis"].sum(), 
     data["nombre_eleves_ce2_hors_ulis"].sum(), data["nombre_eleves_cm1_hors_ulis"].sum(), 
     data["nombre_eleves_cm2_hors_ulis"].sum()]}
