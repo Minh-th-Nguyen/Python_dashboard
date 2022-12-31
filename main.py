@@ -71,6 +71,14 @@ def update_hist(value):
     Input('year', 'value')
     )
 def update_nb_student(value):
+    """update indicator nb_student
+
+    Args:
+        value (int): year
+
+    Returns:
+        (figure): indicator
+    """
     global previous_value
     return nb_student(value, previous_value)
 
@@ -109,3 +117,4 @@ if __name__ == "__main__" :
     #create the map and store them in ressources folders 
     map()
     app.run_server(debug=True)
+
