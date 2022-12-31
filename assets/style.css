@@ -4,7 +4,7 @@ body {
 
 #title {
     background-color: white;
-    margin-left: 20px;
+    margin-left: 2%;
     width: 60%;
     text-align: center;
     box-shadow: 4px 4px 10px #1c1a19;
@@ -16,34 +16,27 @@ body {
     z-index: 100000;
     width: 600px;
     margin-bottom: 30px;
-    margin-left: 20px;
+    margin-left: 2%;
     padding-left: 10px;
     padding-bottom: 5px;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
-#map_histo {
-
-    height: 1900px;
-    margin-left: 20px;
-    margin-top: 300px;
-}
-
 #indicators {
     display: inline-block;
-    width: 2375px;
-    margin-left: -50px;
+    width: 100%;
+    margin-left: 3%;
 }
 
 
 #nb_student_title {
     background-color: white;
     margin-bottom: 20px;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 40px;
     text-align: center;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
@@ -51,10 +44,10 @@ body {
 #student_percentage_title {
     background-color: white;
     margin-bottom: 20px;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 40px;
     text-align: center;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
@@ -62,10 +55,10 @@ body {
 #school_percentage_title {
     background-color: white;
     margin-bottom: 20px;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 40px;
     text-align: center;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
@@ -73,76 +66,76 @@ body {
 #nb_school_title {
     background-color: white;
     margin-bottom: 20px;
-    margin-left: 78px;
-    margin-right: 40px;
+    margin-left: 18%;
+    margin-right: 30%;
     text-align: center;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #histogram2 {
-    margin-left: -30px;
+    margin-left: -2.5%;
     height: 453px;
     background-color: white;
-    width: 950px;
+    width: 85%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #pie_chart2 {
-    margin-left: -30px;
+    margin-left: -2.5%;
     background-color: white;
     margin-top: 30px;
     height: 400px;
-    width: 950px;
+    width: 85%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #nb_student2 {
     background-color: white;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 34px;
     padding-bottom: -30px;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #student_percentage2 {
     background-color: white;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 34px;
     padding-bottom: -30px;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #school_percentage2 {
     background-color: white;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 34px;
     padding-bottom: -30px;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #nb_school2 {
     background-color: white;
-    margin-left: 78px;
+    margin-left: 18%;
     margin-right: 34px;
     padding-bottom: -30px;
-    width: 392px;
+    width: 90%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #map{
     height: 925px;
-    width: 910px;
+    width: 96%;
     margin-left: 20px;
     margin-top: 15px;
 }
@@ -150,15 +143,15 @@ body {
 #map2{
     background-color: white;
     height: 960px;
-    width: 950px;
-    margin-left: 27px;
+    width: 85%;
+    margin-left: 16.5%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
 }
 
 #histogram_title {
-    margin-left: -30px;
-    width: 950px;
+    margin-left: -2.5%;
+    width: 85%;
     background-color: white;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
@@ -166,8 +159,8 @@ body {
 }
 
 #pie_chart_title {
-    margin-left: -30px;
-    width: 950px;
+    margin-left: -2.5%;
+    width: 85%;
     background-color: white;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius: 10px;
@@ -178,8 +171,8 @@ body {
 
 #map_title{
     background-color: white;
-    width: 950px;
-    margin-left: 27px;
+    width: 85%;
+    margin-left: 16.5%;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius: 10px;
     text-align: center;
