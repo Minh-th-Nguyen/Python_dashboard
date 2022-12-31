@@ -8,11 +8,20 @@ import folium
 import numpy as np
 import geopandas as gpd
 
+#file figures import and transform the data to create figures that will be used in the Main
+
 #raw data
 global_data = pd.read_csv('resources\Data.csv', sep = ';')
 
-#create pie chart
 def pie_chart(value):
+    """create pie chart
+
+    Args:
+        value (int) : year
+
+    Returns:
+        figure pie chart
+    """
     global global_data
 
     #transform data to have a dataframe of all classes and numbers of student in each classes
@@ -32,8 +41,14 @@ def pie_chart(value):
         "paper_bgcolor": "rgba(0, 0, 0, 0)",
     })
 
-#create histogram
 def histogram(value):
+    """create histogram
+
+    Args:
+        value (int) : year
+    Returns:
+        figure histogram
+    """
     global global_data
     return( 
         px.histogram(
@@ -50,8 +65,16 @@ def histogram(value):
     })
 )
 
-#create a map for a specific year
 def generate_map(year, data):
+    """create a map for a specific year
+
+    Args:
+        year (int): year
+        data (dataframe): data
+
+    save:
+        map
+    """
 
     data = global_data[global_data['rentree_scolaire'] == year]
 
@@ -220,14 +243,25 @@ def generate_map(year, data):
     #save map in resources and name it depending on the year 
     map.save("resources\map" + str(year) + ".html")
 
-#create all maps
+
 def map() :
+    """create map for each year
+    """
     global global_data
     for i in range(2019,2022) :
         generate_map(i, global_data)
 
-#create indicator for nb student
+
 def nb_student(year, previous_year) :
+    """create indicator for nb student
+
+    Args:
+        year (int): year
+        previous_year (int): previous year selected by user
+
+    Returns:
+        figure : indicator nb of students
+    """
     global global_data
     data = global_data
 
@@ -251,8 +285,18 @@ def nb_student(year, previous_year) :
 
     return fig
 
-#create indicator for percentage of student in public school
+
 def student_percentage(year, previous_year) :
+    """create indicator for percentage of student in public school
+
+    Args:
+        year (int): year
+        previous_year (int): previous year selected by user
+
+    Returns:
+        figure : indicator for percentage of student in public school
+    """ 
+
     global global_data
     data = global_data
 
@@ -300,8 +344,18 @@ def student_percentage(year, previous_year) :
 
     return fig
 
-#create indicator for percentage of public school
+
 def school_percentage(year, previous_year) :
+    """create indicator for percentage of public school
+
+    Args:
+        year (int): year
+        previous_year (int): previous year selected by user
+
+    Returns:
+        figure : indicator for percentage of public school
+    """ 
+
     global global_data
     data = global_data
 
@@ -349,8 +403,18 @@ def school_percentage(year, previous_year) :
 
     return fig
 
-#create indicator for number of school
+
 def nb_school(year, previous_year) :
+    """create indicator for number of school
+
+    Args:
+        year (int): year
+        previous_year (int): previous year selected by user
+
+    Returns:
+        figure : indicator for number of school
+    """ 
+
     global global_data
     data = global_data
 

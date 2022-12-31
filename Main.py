@@ -21,6 +21,14 @@ app.layout = layout()
     Input('year', 'value'),
     )
 def update_map(value):
+    """update map
+
+    Args:
+        value (int): year
+
+    Returns:
+        (srcdoc): map
+    """
     if value is None : 
         return open("resources\map2021.html", 'r').read()
     return open("resources\map" + str(value) + ".html", 'r').read()
@@ -31,6 +39,14 @@ def update_map(value):
     Input('year', 'value')
     )
 def update_hist(value):
+    """update histogram
+
+    Args:
+        value (int): year
+
+    Returns:
+        (figure): histogram
+    """
     return histogram(value)
 
 #callback to update pie chart
@@ -39,6 +55,14 @@ def update_hist(value):
     Input('year', 'value')
     )
 def update_hist(value):
+    """update pie chart
+
+    Args:
+        value (int): year
+
+    Returns:
+        (figure): pie chart
+    """
     return pie_chart(value)
 
 #callback to update nb student indicator
