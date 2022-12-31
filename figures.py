@@ -13,7 +13,8 @@ global_data = pd.read_csv('resources\Data.csv', sep = ';')
 def pie_chart(value):
     global global_data
     data = global_data[global_data['rentree_scolaire'] == value]
-    chart_dict = { "Classe" : ["Pré-élémentaire","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
+    chart_dict = { "Classe" : ["Pré-élémentaire", "élémentaire","CP", "CE1", "CE2", "CM1", "CM2"], "nombre d'élève" : [data["nombre_eleves_preelementaire_hors_ulis"].sum(), 
+    data["nombre_eleves_elementaire_hors_ulis"].sum(),
     data["nombre_eleves_cp_hors_ulis"].sum(), data["nombre_eleves_ce1_hors_ulis"].sum(), 
     data["nombre_eleves_ce2_hors_ulis"].sum(), data["nombre_eleves_cm1_hors_ulis"].sum(), 
     data["nombre_eleves_cm2_hors_ulis"].sum()]}
@@ -21,6 +22,7 @@ def pie_chart(value):
     return px.pie(chart_data, hover_name ="Classe",values="nombre d'élève", hole=0.6).update_layout({
     "plot_bgcolor": "rgba(0, 0, 0, 0)",
     "paper_bgcolor": "rgba(0, 0, 0, 0)",
+    "height" : 400,
     })
 
 def histogram(value):
@@ -44,7 +46,7 @@ def generate_map(year, data):
 
     data = global_data[global_data['rentree_scolaire'] == year]
 
-    map = folium.Map(location=[46, 2.6750], zoom_start = 7, tiles="cartodbpositron")   
+    map = folium.Map(location=[46, 2.6750], zoom_start = 6, tiles="cartodbpositron")   
     regions_data = data.drop(['rentree_scolaire', 'academie', 'departement', 'commune', 'numero_ecole', 'denomination_principale', 'patronyme', 'secteur', 'rep', 'rep_plus', 'tri', 'code_postal'], axis=1)
     regions_data = regions_data.groupby(['region_academique']).agg({'region_academique' : 'first', 'nombre_total_classes' : 'mean', 'nombre_total_eleves' : 'mean'})
     regions_data.loc[(regions_data.region_academique == 'AUVERGNE-ET-RHONE-ALPES'),'region_academique'] = 'Auvergne-Rh\u00f4ne-Alpes'
@@ -201,7 +203,30 @@ def map() :
         generate_map(i, global_data)
 
 
-def indicator(year, previous_year) :
+def nb_student(year, previous_year) :
+    global global_data
+    data = global_data
+
+    fig = go.Figure(go.Indicator(
+    mode = "number+delta",
+    number = {"font":{"size":50}},
+    value = data[data['rentree_scolaire'] == year]['nombre_total_eleves'].sum(),
+    title = {"text": "<span style='font-size:1.5em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
+    delta = {'reference': data[data['rentree_scolaire'] == previous_year]['nombre_total_eleves'].sum(), 'relative': True},
+    domain = {'x': [0, 1], 'y': [0.3, 0.7]}
+    ))
+
+    fig.update_layout({
+    "plot_bgcolor": "rgba(0, 0, 0, 0)",
+    "paper_bgcolor": "rgba(0, 0, 0, 0)",
+    "height" : 200,
+    "margin" : dict(t=80),
+    })
+
+    return fig
+
+
+def student_percentage(year, previous_year) :
     global global_data
     data = global_data
 
@@ -210,50 +235,14 @@ def indicator(year, previous_year) :
         df = df[df['secteur'] == "PUBLIC"]
         return (df['nombre_total_eleves'].sum()*100)/data[data['rentree_scolaire'] == year]['nombre_total_eleves'].sum()
 
-    def Calculate_school_percentage(year) : 
-        df = data[data['rentree_scolaire'] == year]
-        df = df[df['secteur'] == "PUBLIC"]
-        return (len(df.axes[0])*100)/len(data[data['rentree_scolaire'] == year].axes[0])
-
-    fig = go.Figure(go.Indicator(
-        mode = "number+delta",
-        value = data[data['rentree_scolaire'] == year]['nombre_total_eleves'].sum(),
-        title = {"text": "<span style='font-size:1.5em'>Nombre d'élèves<br><br><span style='font-size:0.8em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
-        delta = {'reference': data[data['rentree_scolaire'] == previous_year]['nombre_total_eleves'].sum(), 'relative': True},
-        domain = {'x': [0, 0.25], 'y': [0.3, 0.7]}
-    ))
-        
-
-    fig.add_trace(
-        go.Indicator(
-        mode = "number+delta",
-        number = {'suffix': "%"},
-        value = Calculate_student_percentage(year),
-        title = {"text": "<span style='font-size:1.5em'>Elèves dans le public<br><br><span style='font-size:0.8em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
-        delta = {'reference': Calculate_student_percentage(previous_year), 'relative': False},
-        domain = {'x': [0.25, 0.5], 'y': [0.3, 0.7]}
-        )
-    )
-
-
-    fig.add_trace(
-        go.Indicator(
-        mode = "number+delta",
-        number = {'suffix': "%"},
-        value = Calculate_school_percentage(year),
-        title = {"text": "<span style='font-size:1.5em'>Ecole publique<br><br><span style='font-size:0.8em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
-        delta = {'reference': Calculate_school_percentage(previous_year), 'relative': False},
-        domain = {'x': [0.5, 0.75], 'y': [0.3, 0.7]}
-        )
-    )
-
-
-    fig.add_trace(go.Indicator(
-        mode = "number+delta",
-        value = len(data[data['rentree_scolaire'] == year].axes[0]),
-        title = {"text": "<span style='font-size:1.5em'>Nombre d'écoles<br><br><span style='font-size:0.8em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
-        delta = {'reference': len(data[data['rentree_scolaire'] == previous_year].axes[0]), 'relative': True},
-        domain = {'x': [0.75, 1], 'y': [0.3, 0.7]}
+    fig = go.Figure(
+    go.Indicator(
+    mode = "number+delta",
+    number = {'suffix': "%", "font":{"size":50}},
+    value = Calculate_student_percentage(year),
+    title = {"text": "<span style='font-size:1.5em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
+    delta = {'reference': Calculate_student_percentage(previous_year), 'relative': False},
+    domain = {'x': [0, 1], 'y': [0.3, 0.7]}
         )
     )
 
@@ -261,22 +250,7 @@ def indicator(year, previous_year) :
         mode = "gauge",
         value = Calculate_student_percentage(year),
         align = "left",
-        domain = {'x': [0.32, 0.43], 'y': [0.25, 0.3]},
-        gauge = {
-            'shape': "bullet",
-            'axis': {'range': [0, 100]},
-            'bar': {
-                'color': "red",
-                'thickness': .9,
-            },
-        },
-    ))
-
-    fig.add_trace(go.Indicator(
-        mode = "gauge",
-        value = Calculate_school_percentage(year),
-        align = "left",
-        domain = {'x': [0.57, 0.68], 'y': [0.25, 0.3]},
+        domain = {'x': [0.1, 0.9], 'y': [0.1, 0.17]},
         gauge = {
             'shape': "bullet",
             'axis': {'range': [0, 100]},
@@ -290,11 +264,81 @@ def indicator(year, previous_year) :
     fig.update_layout({
     "plot_bgcolor": "rgba(0, 0, 0, 0)",
     "paper_bgcolor": "rgba(0, 0, 0, 0)",
+    "height" : 200,
+    "margin" : dict(t=20, b=20),
+    })
+
+    return fig
+
+def school_percentage(year, previous_year) :
+    global global_data
+    data = global_data
+
+    def Calculate_school_percentage(year) : 
+        df = data[data['rentree_scolaire'] == year]
+        df = df[df['secteur'] == "PUBLIC"]
+        return (len(df.axes[0])*100)/len(data[data['rentree_scolaire'] == year].axes[0])        
+
+
+    fig = go.Figure(
+        go.Indicator(
+        mode = "number+delta",
+        number = {'suffix': "%", "font":{"size":50}},
+        value = Calculate_school_percentage(year),
+        title = {"text": "<span style='font-size:1.5em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
+        delta = {'reference': Calculate_school_percentage(previous_year), 'relative': False},
+        domain = {'x': [0, 1], 'y': [0.3, 0.7]}
+        )
+    )
+
+    fig.add_trace(go.Indicator(
+        mode = "gauge",
+        value = Calculate_school_percentage(year),
+        align = "left",
+        domain = {'x': [0.1, 0.9], 'y': [0.1, 0.17]},
+        gauge = {
+            'shape': "bullet",
+            'axis': {'range': [0, 100]},
+            'bar': {
+                'color': "red",
+                'thickness': .9,
+            },
+        },
+    ))
+
+    fig.update_layout({
+    "plot_bgcolor": "rgba(0, 0, 0, 0)",
+    "paper_bgcolor": "rgba(0, 0, 0, 0)",
+    "height" : 200,
+    "margin" : dict(t=20, b=20),
     })
 
     return fig
 
 
+def nb_school(year, previous_year) :
+    global global_data
+    data = global_data
+
+    fig = go.Figure(go.Indicator(
+        mode = "number+delta",
+        number = {"font":{"size":50}},
+        value = len(data[data['rentree_scolaire'] == year].axes[0]),
+        title = {"text": "<span style='font-size:1.5em;color:gray'>Delta par rapport à l'année " + str(previous_year) + "</span><br>"},
+        delta = {'reference': len(data[data['rentree_scolaire'] == previous_year].axes[0]), 'relative': True},
+        domain = {'x': [0, 1], 'y': [0.3, 0.7]}
+        )
+    )
+
+    fig.update_layout({
+    "plot_bgcolor": "rgba(0, 0, 0, 0)",
+    "paper_bgcolor": "rgba(0, 0, 0, 0)",
+    "height" : 200,
+    "margin" : dict(t=80),
+    })
+
+    return fig
+    
 if __name__ == "__main__" :
     test = pie_chart(2021)
     test.show()

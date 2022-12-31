@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc, Input, Output
-from figures import map, histogram, pie_chart, indicator
+from figures import map, histogram, pie_chart, nb_student, student_percentage, school_percentage, nb_school
 from resources.Layout import layout
 
 previous_value = 2021
@@ -39,14 +39,38 @@ def update_hist(value):
 
 
 @app.callback(
-    Output("indicator", "figure"),
+    Output("nb_student", "figure"),
     Input('year', 'value')
     )
-def update_indicator(value):
+def update_nb_student(value):
+    global previous_value
+    return nb_student(value, previous_value)
+
+@app.callback(
+    Output("student_percentage", "figure"),
+    Input('year', 'value')
+    )
+def update_student_percentage(value):
+    global previous_value
+    return student_percentage(value, previous_value)
+
+@app.callback(
+    Output("school_percentage", "figure"),
+    Input('year', 'value')
+    )
+def update_school_percentage(value):
+    global previous_value
+    return school_percentage(value, previous_value)
+
+@app.callback(
+    Output("nb_school", "figure"),
+    Input('year', 'value')
+    )
+def update_nb_school(value):
     global previous_value
     temp = previous_value
     previous_value = value
-    return indicator(value, temp)
+    return nb_school(value, temp)
 
 
 if __name__ == "__main__" :
