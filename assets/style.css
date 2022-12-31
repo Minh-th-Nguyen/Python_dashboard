@@ -11,6 +11,22 @@ body {
     border-radius:10px;
 }
 
+#bouton {
+    background-color: white;
+    margin-left: 5%;
+    width: 300px;
+    height: 70px;
+    display: inline-block;
+    box-shadow: 4px 4px 10px #1c1a19;
+    border-radius:10px;
+}
+
+#bouton2 {
+    padding-left: 19%;
+    margin-bottom: -20%;
+    justify-content: center;
+}
+
 #slider {
     background-color: white;
     z-index: 100000;
@@ -21,6 +37,7 @@ body {
     padding-bottom: 5px;
     box-shadow: 4px 4px 10px #1c1a19;
     border-radius:10px;
+    display: inline-block;
 }
 
 #indicators {
@@ -136,7 +153,7 @@ body {
 #map{
     height: 925px;
     width: 96%;
-    margin-left: 20px;
+    margin-left: 2%;
     margin-top: 15px;
 }
 

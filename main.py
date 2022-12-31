@@ -31,6 +31,8 @@ def update_map(value):
     """
     if value is None : 
         return open("resources\map2021.html", 'r').read()
+
+    
     return open("resources\map" + str(value) + ".html", 'r').read()
 
 #callback to update histogram

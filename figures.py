@@ -247,7 +247,6 @@ def generate_map(year, data):
     #save map in resources and name it depending on the year 
     map.save("resources\map" + str(year) + ".html")
 
-
 def map() :
     """create map for each year
     """

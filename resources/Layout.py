@@ -7,21 +7,33 @@ def layout():
             html.H1("Dashboard Ecole élémentaire et pré-élémentaire"),
         ], id="title"),
 
-        html.Div([ 
-            html.Div([    
-                html.Label('Année'),
-                dcc.Slider(    
-                    2019, 2021, 1,
-                    value=2021,
-                    marks=None,
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    id = "year"
-                    )
-                ],
-                #style={'width': "30%", 'margin-left': '1000px', "transform": "scale(2)", "margin-top" : "100px", "zIndex" : 10}
+        html.Div([
+            html.Div([ 
+                html.Div([    
+                    html.Label('Année'),
+                    dcc.Slider(    
+                        2019, 2021, 1,
+                        value=2021,
+                        marks=None,
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        id = "year"
+                        )
+                    ],
+                ),
+            ],id="slider",
             ),
-        ],id="slider",
-        ),
+
+            html.Div([ 
+                html.Div([ 
+                    dcc.RadioItems(
+                        ['Par classe', 'Par école'],
+                        'Par classe',
+                        id='bouton_int',
+                        inline=True
+                        )
+                    ], id="bouton2"),
+                ], id="bouton"),
+        ]),
 
         html.Div([ 
                 html.Div([
